@@ -83,7 +83,13 @@ NVIDIA-DRIVER 375.26
 
     # install python packages for Caffe
     pip install --upgrade pip
-    for req in $(cat python/requirements.txt) pydot; do pip install $req; done
+    # during build from recipe file pip install ipython>=1.1.0 try to install
+    # ipython v6 which is incompatible with python version
+    # sed is added to force ipython < 6
+    for req in $(cat python/requirements.txt | sed 's/ipython>=1.1.0/ipython>=1.1.0,<6/g') pydot
+    do
+        pip install $req
+    done
 
     # make Caffe
     # NOTE: in the future we may want -DUSE_NCCL=1

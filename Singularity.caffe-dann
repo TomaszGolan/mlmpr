@@ -77,11 +77,11 @@ NVIDIA-DRIVER 375.26
 
     cd /opt/
     git clone https://github.com/NVIDIA/nccl.git
-    cd ncll/
+    cd nccl/
     make
     make install
     cd ../
-    rm -rf ncll
+    rm -rf nccl
 
     ##### INSTALL CAFFE #####
 

@@ -73,16 +73,6 @@ NVIDIA-DRIVER 375.26
     ln -v -s libnvidia-ml.so.375.26 libnvidia-ml.so.1
     ln -v -s libcuda.so.375.26 libcuda.so.1
 
-    ##### INSTALL NCLL #####
-
-    cd /opt/
-    git clone https://github.com/NVIDIA/nccl.git
-    cd nccl/
-    make
-    make install
-    cd ../
-    rm -rf nccl
-
     ##### INSTALL CAFFE #####
 
     # get Caffe source code (with DANN included)
@@ -94,7 +84,10 @@ NVIDIA-DRIVER 375.26
 
     # install python packages for Caffe
     pip install --upgrade pip
-    for req in $(cat python/requirements.txt) pydot
+    # during build from recipe file pip install ipython>=1.1.0 try to install
+    # ipython v6 which is incompatible with python version
+    # sed is added to force ipython < 6
+    for req in $(cat python/requirements.txt | sed 's/ipython>=1.1.0/ipython>=1.1.0,<6/g') pydot
     do
         pip install $req
     done
@@ -102,7 +95,7 @@ NVIDIA-DRIVER 375.26
     # make Caffe
     mkdir build
     cd build/
-    cmake -DUSE_CUDNN=1 -DUSE_NCCL=1 ..
+    cmake -DUSE_CUDNN=1 ..
     make
 
 %runscript

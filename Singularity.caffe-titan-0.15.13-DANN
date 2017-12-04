@@ -84,10 +84,7 @@ ln -v -s libnvidia-ml.so.375.26 libnvidia-ml.so.1
     cd /opt/
     # to avoid "Problem with the SSL CA cert (path? access rights?)"
     update-ca-certificates
-    git clone --depth 1 https://bitbucket.org/stevenryoung/zlib-caffe/branch/titan-zlib-0.15.13-DANN
-    cd titan-zlib-0.15.13-DANN
-    git fetch && git checkout titan-zlib-0.15.13-DANN
-    cd ..
+    git clone -b titan-zlib-0.15.13-DANN --depth 1 https://bitbucket.org/stevenryoung/zlib-caffe/branch/titan-zlib-0.15.13-DANN
     mv titan-zlib-0.15.13-DANN caffe
     cd caffe/
 

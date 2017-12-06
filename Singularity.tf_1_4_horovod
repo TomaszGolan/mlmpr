@@ -19,64 +19,20 @@ cuda_driver 375.26
 A portable Ubuntu 16.04 environment with TensorFlow 1.4 and Horovod
 
 %environment
-    # set these environment variables
-    export NV_DRIVER_VERSION=375.26
     export CUDA_ROOT=/usr/local/cuda
     export CUDA_HOME=/usr/local/cuda
     export PATH=$PATH:$NV_DRIVER_ROOT:$CUDA_ROOT/bin
     export LD_LIBRARY_PATH=$NV_DRIVER_ROOT:$CUDA_ROOT/lib64
 
-%runscript
-    # Check the current environment
-    chk_nvidia_uvm=$(grep nvidia_uvm /proc/modules)
-    if [ -z "$chk_nvidia_uvm" ]; then
-        echo "Problem detected on the host: the Linux kernel module nvidia_uvm is not loaded"
-    fi
-    exec /bin/bash
-
-%setup
-    # Runs from outside the container during Bootstrap
-    workdir=$(pwd)
-
-    # Install cuda driver
-    NV_DRIVER_VERSION=375.26
-    NV_DRIVER_FILE=NVIDIA-Linux-x86_64-${NV_DRIVER_VERSION}.run
-
-    ##### INSTALL NVIDIA DRIVERS #####
-    
-    # get NVIDIA drivers
-    cd /opt/
-    wget http://us.download.nvidia.com/XFree86/Linux-x86_64/375.26/NVIDIA-Linux-x86_64-375.26.run
-    # extract .run file to /usr/local/
-    sh NVIDIA-Linux-x86_64-375.26.run -x
-    mv NVIDIA-Linux-x86_64-375.26 /usr/local/NVIDIA-Linux-x86_64
-    rm NVIDIA-Linux-x86_64-375.26.run
-    
-    # create symbolic links
-    cd /usr/local/NVIDIA-Linux-x86_64
-    for n in *.375.26; do
-        ln -v -s $n ${n%.375.26}
-    done
-    ln -v -s libnvidia-ml.so.375.26 libnvidia-ml.so.1
-    ln -v -s libcuda.so.375.26 libcuda.so.1
-
-
 %post
     # Runs within the container during Bootstrap
 
-    # make lqcd filesystem mount points
+    # make lqcd filesystem mount points?
     mkdir /scratch /data /project /lqcdproj
-
-    # Set up some required environment defaults
-    export LC_ALL=C
-    export CUDA_HOME=/usr/local/cuda
-    export CUDA_ROOT=/usr/local/cuda
-    export PATH=/bin:/sbin:/usr/bin:/usr/sbin:${CUDA_HOME}/bin:/usr/local/NVIDIA-Linux-x86_64:$PATH
-    export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${CUDA_HOME}/extras/CUPTI/lib64:/usr/local/NVIDIA-Linux-x86_64
 
     # Install the necessary packages (from repo)
     apt-get update && apt-get install -y --no-install-recommends \
-    	autoconf \
+      autoconf \
       automake \
       bc \
       cmake \
@@ -134,20 +90,33 @@ A portable Ubuntu 16.04 environment with TensorFlow 1.4 and Horovod
       apt-get autoremove && \
       rm -rf /var/lib/apt/lists/*
 
-    # libgpuarray with python binding
-    git clone https://github.com/Theano/libgpuarray.git
-    sdir=`pwd`
-    cd libgpuarray && \
-      mkdir Build && \
-      cd Build && \
-      cmake .. -DCMAKE_BUILD_TYPE=Release && \
-      make && \
-      make install && \
-      cd .. && \
-      python2.7 setup.py install && \
-      cd $sdir && \
-      rm -rf libgpuarray
-    /sbin/ldconfig
+    ##### INSTALL NVIDIA DRIVERS #####
+    
+    # get NVIDIA drivers
+    cd /opt/
+    wget http://us.download.nvidia.com/XFree86/Linux-x86_64/375.26/NVIDIA-Linux-x86_64-375.26.run
+    # extract .run file to /usr/local/
+    sh NVIDIA-Linux-x86_64-375.26.run -x
+    mv NVIDIA-Linux-x86_64-375.26 /usr/local/NVIDIA-Linux-x86_64
+    rm NVIDIA-Linux-x86_64-375.26.run
+    
+    # create symbolic links
+    cd /usr/local/NVIDIA-Linux-x86_64
+    for n in *.375.26; do
+        ln -v -s $n ${n%.375.26}
+    done
+    ln -v -s libnvidia-ml.so.375.26 libnvidia-ml.so.1
+    ln -v -s libcuda.so.375.26 libcuda.so.1
+
+    ##### INSTALL NCLL #####
+
+    cd /opt/
+    git clone https://github.com/NVIDIA/nccl.git
+    cd nccl/
+    make
+    make install
+    cd ../
+    rm -rf nccl
 
     # Update to the latest pip (newer than repo)
     pip install --no-cache-dir --upgrade pip

@@ -21,7 +21,6 @@ A portable Ubuntu 16.04 environment with TensorFlow 1.4 and Horovod
 %environment
     # set these environment variables
     export NV_DRIVER_VERSION=375.26
-    export NV_DRIVER_ROOT=/usr/local/NVIDIA-Linux-x86_64
     export CUDA_ROOT=/usr/local/cuda
     export CUDA_HOME=/usr/local/cuda
     export PATH=$PATH:$NV_DRIVER_ROOT:$CUDA_ROOT/bin
@@ -43,16 +42,24 @@ A portable Ubuntu 16.04 environment with TensorFlow 1.4 and Horovod
     NV_DRIVER_VERSION=375.26
     NV_DRIVER_FILE=NVIDIA-Linux-x86_64-${NV_DRIVER_VERSION}.run
 
-    echo "Unpacking NVIDIA driver into container..."
-    cd ${SINGULARITY_ROOTFS}/usr/local/
-    sh ${workdir}/drivers/${NV_DRIVER_FILE} -x
-    mv NVIDIA-Linux-x86_64-${NV_DRIVER_VERSION} NVIDIA-Linux-x86_64
-    cd NVIDIA-Linux-x86_64/
-    for n in *.$NV_DRIVER_VERSION; do
+    ##### INSTALL NVIDIA DRIVERS #####
+    
+    # get NVIDIA drivers
+    cd /opt/
+    wget http://us.download.nvidia.com/XFree86/Linux-x86_64/375.26/NVIDIA-Linux-x86_64-375.26.run
+    # extract .run file to /usr/local/
+    sh NVIDIA-Linux-x86_64-375.26.run -x
+    mv NVIDIA-Linux-x86_64-375.26 /usr/local/NVIDIA-Linux-x86_64
+    rm NVIDIA-Linux-x86_64-375.26.run
+    
+    # create symbolic links
+    cd /usr/local/NVIDIA-Linux-x86_64
+    for n in *.375.26; do
         ln -v -s $n ${n%.375.26}
     done
-    ln -v -s libnvidia-ml.so.$NV_DRIVER_VERSION libnvidia-ml.so.1
-    ln -v -s libcuda.so.$NV_DRIVER_VERSION libcuda.so.1
+    ln -v -s libnvidia-ml.so.375.26 libnvidia-ml.so.1
+    ln -v -s libcuda.so.375.26 libcuda.so.1
+
 
 %post
     # Runs within the container during Bootstrap

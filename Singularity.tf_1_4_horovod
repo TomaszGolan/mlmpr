@@ -168,7 +168,7 @@ A portable Ubuntu 16.04 environment with TensorFlow 1.4 and Horovod
     pip install --no-cache-dir --ignore-installed --upgrade $TF_BINARY_URL
 
     # Horovod
-    pip install --no-cache-dir --upgrade horovod
+    # pip install --no-cache-dir --upgrade horovod
 
     /sbin/ldconfig
 

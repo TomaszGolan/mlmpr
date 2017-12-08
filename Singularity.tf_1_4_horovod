@@ -159,15 +159,6 @@ A portable Ubuntu 16.04 environment with TensorFlow 1.4 and Horovod
       wheel \
       zmq
 
-    # pyCUDA
-    ( cd /tmp && \
-      wget https://pypi.python.org/packages/b3/30/9e1c0a4c10e90b4c59ca7aa3c518e96f37aabcac73ffe6b5d9658f6ef843/pycuda-2017.1.1.tar.gz#md5=9e509f53a23e062b31049eb8220b2e3d && \
-      tar xf pycuda-2017.1.1.tar.gz && \
-      cd pycuda-2017.1.1 && \
-      python configure.py --cuda-root=${CUDA_HOME} --cudadrv-lib-dir=${NV_DRIVER_ROOT} && \
-      make install \
-    )
-
     # TensorFlow package versions as listed here:
     #   https://www.tensorflow.org/get_started/os_setup#test_the_tensorflow_installation
     #

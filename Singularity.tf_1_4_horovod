@@ -5,14 +5,14 @@
 #
 
 BootStrap: docker
-From: nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
+From: nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 IncludeCmd: false
 
 %labels
 
 Maintainer G. Perdue
 Date: 2017-12-05
-cuda_driver 375.26
+cuda_driver 390.48
 
 %help
 
@@ -20,7 +20,7 @@ A portable Ubuntu 16.04 environment with TensorFlow 1.4 and Horovod
 
 %environment
     # set these environment variables
-    export NV_DRIVER_VERSION=375.26
+    export NV_DRIVER_VERSION=390.48
     export NV_DRIVER_ROOT=/usr/local/NVIDIA-Linux-x86_64
     export CUDA_ROOT=/usr/local/cuda
     export CUDA_HOME=/usr/local/cuda
@@ -111,19 +111,19 @@ A portable Ubuntu 16.04 environment with TensorFlow 1.4 and Horovod
     
     # get NVIDIA drivers
     cd /opt/
-    wget http://us.download.nvidia.com/XFree86/Linux-x86_64/375.26/NVIDIA-Linux-x86_64-375.26.run
+    wget http://us.download.nvidia.com/XFree86/Linux-x86_64/390.48/NVIDIA-Linux-x86_64-390.48.run
     # extract .run file to /usr/local/
-    sh NVIDIA-Linux-x86_64-375.26.run -x
-    mv NVIDIA-Linux-x86_64-375.26 /usr/local/NVIDIA-Linux-x86_64
-    rm NVIDIA-Linux-x86_64-375.26.run
+    sh NVIDIA-Linux-x86_64-390.48.run -x
+    mv NVIDIA-Linux-x86_64-390.48 /usr/local/NVIDIA-Linux-x86_64
+    rm NVIDIA-Linux-x86_64-390.48.run
     
     # create symbolic links
     cd /usr/local/NVIDIA-Linux-x86_64
-    for n in *.375.26; do
-        ln -v -s $n ${n%.375.26}
+    for n in *.390.48; do
+        ln -v -s $n ${n%.390.48}
     done
-    ln -v -s libnvidia-ml.so.375.26 libnvidia-ml.so.1
-    ln -v -s libcuda.so.375.26 libcuda.so.1
+    ln -v -s libnvidia-ml.so.390.48 libnvidia-ml.so.1
+    ln -v -s libcuda.so.390.48 libcuda.so.1
 
     ##### INSTALL NCLL #####
 
